@@ -1,0 +1,3 @@
+[submodule "3rdparty/liblcb"]
+	path = 3rdparty/liblcb
+	url = https://github.com/rozhuk-im/liblcb.git
