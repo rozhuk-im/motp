@@ -88,3 +88,7 @@ options:
 ``` shell
 motp -s 'secret' -p '1111'
 ```
+
+### OpenConnect
+To use with openconnect see example script: motp_openconnect.sh
+
