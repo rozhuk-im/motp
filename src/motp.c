@@ -61,6 +61,7 @@
 
 
 typedef struct command_line_options_s {
+	int		verbose;
 	const char	*secret;
 	const char	*pin;
 	uint32_t	duration;
@@ -74,6 +75,7 @@ typedef struct command_line_options_s {
 
 static struct option long_options[] = {
 	{ "help",	no_argument,		NULL,	'?'	},
+	{ "verbose",	no_argument,		NULL,	'v'	},
 	{ "secret",	required_argument,	NULL,	's'	},
 	{ "pin",	required_argument,	NULL,	'p'	},
 	{ "duration",	required_argument,	NULL,	'P'	},
@@ -85,6 +87,7 @@ static struct option long_options[] = {
 
 static const char *long_options_descr[] = {
 	"		Show help",
+	"		Be verbose",
 	"<string>	Shared secret",
 	"<string>	PIN",
 	"seconds>	Code duration interval. Default: 10",
@@ -142,22 +145,25 @@ restart_opts:
 			break;
 		case 0: /* help */
 			return (EINVAL);
-		case 1: /* secret */
+		case 1: /* verbose */
+			cmd_opts->verbose = 1;
+			break;
+		case 2: /* secret */
 			cmd_opts->secret = optarg;
 			break;
-		case 2: /* pin */
+		case 3: /* pin */
 			cmd_opts->pin = optarg;
 			break;
-		case 3: /* duration */
+		case 4: /* duration */
 			cmd_opts->duration = atoi(optarg);
 			break;
-		case 4: /* length */
+		case 5: /* length */
 			cmd_opts->length = atoi(optarg);
 			break;
-		case 5: /* time */
+		case 6: /* time */
 			cmd_opts->time = optarg;
 			break;
-		case 6: /* tz */
+		case 7: /* tz */
 			cmd_opts->tz = optarg;
 			break;
 		default:
@@ -289,6 +295,10 @@ err_out_bad_tz:
 	}
 
 	/* Gen result. */
+	if (cmd_opts.verbose) {
+		fprintf(stdout, "Time: %s", asctime(&tml));
+	}
+
 	time_epoch = (((uint64_t)mktime(&tml)) / ((uint64_t)cmd_opts.duration));
 	buf_size = snprintf(buf, sizeof(buf), "%"PRIu64"%s%s",
 	    time_epoch, cmd_opts.secret, cmd_opts.pin);

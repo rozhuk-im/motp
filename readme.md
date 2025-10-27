@@ -76,6 +76,7 @@ motp     Simple console mOTP tool
 Usage: motp [options]
 options:
 	-help, -? 		Show help
+	-verbose, -v		Be verbose
 	-secret, -s <string>	Shared secret
 	-pin, -p <string>	PIN
 	-duration, -P seconds>	Code duration interval. Default: 10
