@@ -49,7 +49,7 @@
 #	include <xlocale.h> /* strptime_l */
 #endif
 
-#include "md5.h"
+#include "crypto/hash/md5.h"
 
 
 #ifndef PACKAGE_STRING
@@ -193,7 +193,7 @@ print_usage(char *progname, struct option *opts,
 
 int
 main(int argc, char **argv) {
-	int error = 0;
+	int error = 0, tz_val, tz_sign;
 	cmd_opts_t cmd_opts;
 	locale_t locale_c = NULL;
 	struct tm tml;
@@ -259,11 +259,33 @@ main(int argc, char **argv) {
 
 	/* Time zone. */
 	if (NULL != cmd_opts.tz) {
-		if (NULL == strptime_l(cmd_opts.tz, "%z", &tml, locale_c)) {
+		buf_size = strlen(cmd_opts.tz);
+		if (3 != buf_size && 5 != buf_size) {
+err_out_bad_tz:
 			fprintf(stderr, "Unknown time zone format string!\n");
 			print_usage(argv[0], long_options, long_options_descr);
 			return (-1);
 		}
+		if ('+' == cmd_opts.tz[0]) {
+			tz_sign = 1;
+		} else if ('-' == cmd_opts.tz[0]) {
+			tz_sign = -1;
+		} else {
+			goto err_out_bad_tz;
+		}
+		tz_val = atoi((cmd_opts.tz + 1));
+		if (3 == buf_size) { /* In case short form '+09' add 00 minutes. */
+			tz_val *= 100;
+		}
+		if (1400 < tz_val ||
+		    (-1 == tz_sign && 1200 < tz_val) ||
+		    60 <= (tz_val % 100))
+			goto err_out_bad_tz;
+		/* Apply time zone. */
+		clock = mktime(&tml); /* Convert back to UNIX time, include TZ. */
+		/* Add new TZ offset. */
+		clock += (tz_sign * ((3600 * (tz_val / 100)) + (60 * (tz_val % 100))));
+		gmtime_r(&clock, &tml); /* Convert from UNIX time, without app TZ apply. */
 	}
 
 	/* Gen result. */

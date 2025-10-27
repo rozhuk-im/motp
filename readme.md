@@ -64,7 +64,7 @@ cc motp.c -O2 -I../3rdparty/liblcb/include/crypto/hash -lm -o motp
 sudo pkg install git
 git clone --recursive https://github.com/rozhuk-im/motp.git
 cd motp/src
-cc motp.c -O2 -I../3rdparty/liblcb/include/crypto/hash -lm -o motp
+cc motp.c -O2 -I../3rdparty/liblcb/include -lm -o motp
 ```
 
 
@@ -81,7 +81,7 @@ options:
 	-duration, -P seconds>	Code duration interval. Default: 10
 	-length, -d <number>	Result code length. Default: 6
 	-time, -t <string>	Time string, in one of formats: HTTP date / RFC 822, RFC 850, ANSI C, YYYY-MM-DD HH:MM:SS, Number of seconds since the Epoch (UTC)
-	-tz, -T <string>	The timezone time zone offset from UTC. Will override time zone from 'time' string is set. Ex: +0100, -0500.
+	-tz, -T <string>	The timezone time zone offset from UTC. Will override time zone from 'time' string is set. Ex: +0100, -0500, +09, -10.
 ```
 
 ### example

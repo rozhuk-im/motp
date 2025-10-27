@@ -23,4 +23,4 @@ jobs:
     - name: Build
       working-directory: ${{github.workspace}}/src
       shell: bash
-      run: cc motp.c -I../3rdparty/liblcb/include/crypto/hash -lm -o motp
+      run: cc motp.c -I../3rdparty/liblcb/include -lm -o motp
